@@ -1,0 +1,11 @@
+.table {
+  width: 70%;
+  margin: 30px;
+}
+.btns {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  width: 30%;
+  margin: 30px;
+}

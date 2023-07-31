@@ -1,113 +1,364 @@
-import Image from 'next/image'
+"use client";
+import { useState } from "react";
+import Button from "@components/Button";
+import { Modal } from "@mantine/core";
+import { useDisclosure } from "@mantine/hooks";
+import styles from "styles/Home.module.css";
 
 export default function Home() {
+  // "" : 위의 행과 병합
+  // & : 왼쪽 열과 병합
+  // -1 : 빈 데이터
+  // 배열 : row 행 하나씩 읽는다
+  const [dataList, setDataList] = useState([
+    [
+      "대학",
+      "모집단위",
+      "&",
+      "계열",
+      "모집인원",
+      "&",
+      "&",
+      "&",
+      "&",
+      "&",
+      "&",
+      "&",
+      "&",
+      "계",
+      "캠퍼스"
+    ],
+    ["", "", "", "", "가군", "&", "&", "&", "&", "나군", "&", "&", "&", "", ""],
+    [
+      "",
+      "",
+      "",
+      "",
+      "수능",
+      "&",
+      "&",
+      "&",
+      "화새부9종합1터",
+      "수능",
+      "&",
+      "&",
+      "&",
+      "",
+      ""
+    ],
+    [
+      "",
+      "",
+      "",
+      "",
+      "일반",
+      "농어촌",
+      "특성화고교졸업자",
+      "초생활수급자",
+      "-특활고졸업자재직자",
+      "일반",
+      "농어촌",
+      "성화얼i졸업자년터",
+      "초생활수급및차상우7계층그사",
+      "",
+      ""
+    ],
+    [
+      "공과",
+      ".........",
+      "&",
+      "자연",
+      "6723222576",
+      "42222",
+      "2222",
+      "22",
+      "-1",
+      "341828",
+      "222",
+      "-1",
+      "222",
+      "7538223227262918",
+      "서울"
+    ],
+    [
+      "Al응합",
+      "AI소프트웨어응합학부",
+      "컴퓨미서화소프트웨어공학인공지능L데이터사이언스엔터터인터트테크놀로지",
+      "자연",
+      "-1",
+      "-1",
+      "-1",
+      "-1",
+      "-1",
+      "인문8자연78",
+      "1",
+      "2",
+      "-1",
+      "95",
+      "서울"
+    ],
+    [
+      "사범",
+      "교육학과국어고육과역사교육과지리교육과수학교육과가정고육과체육교육과",
+      "&",
+      "인문자연예체능",
+      "72137272727373",
+      "-1",
+      "-1",
+      "-1",
+      "-1",
+      "-1",
+      "-1",
+      "-1",
+      "-1",
+      "12131212121313",
+      "서울"
+    ],
+    [
+      "예술",
+      "불교미술교적미술학부조소연극학부연극교적)유지업교직영화영상학과교직",
+      "&",
+      "예체능",
+      "1276",
+      "2",
+      "2",
+      "-1",
+      "-1",
+      "7575",
+      "-1",
+      "-1",
+      "-1",
+      "12131212121313",
+      "서울"
+    ],
+    [
+      "0F55",
+      "약학과",
+      "&",
+      "LO",
+      "-1",
+      "-1",
+      "-1",
+      "-1",
+      "-1",
+      "2)1",
+      ")",
+      "-1",
+      "3",
+      "11",
+      "년@메HO"
+    ],
+    [
+      "래움합터",
+      "움합보안학과사회복지상담학과글로벌무역학과",
+      "&",
+      "9[L규",
+      "-1",
+      "-1",
+      "-1",
+      "-1",
+      "777",
+      "-1",
+      "-1",
+      "-1",
+      "-1",
+      "777",
+      "서울"
+    ]
+  ]);
+  const [clickedCell, setClickedCell] = useState({ name: "", row: 0, col: 0 });
+  const [opened, { open, close }] = useDisclosure(false);
+
+  const rowCheck = (row: number, col: number) => {
+    let rowSpan = 1;
+
+    if ("" === dataList[row][col]) {
+      rowSpan = -1;
+    } else {
+      for (let i = row + 1; i < dataList.length; i++) {
+        if ("" === dataList[i][col]) {
+          rowSpan++;
+        } else {
+          break;
+        }
+      }
+    }
+
+    return rowSpan;
+  };
+
+  const colCheck = (row: number, col: number) => {
+    const std = dataList[row][col];
+    let colSpan = 1;
+
+    if (std !== "&") {
+      for (let i = col + 1; i < dataList[row].length; i++) {
+        if ("&" === dataList[row][i]) {
+          colSpan++;
+        } else {
+          break;
+        }
+      }
+    } else {
+      colSpan = -1;
+    }
+    return { colSpan: colSpan, name: std };
+  };
+
+  const renderCell = () => {
+    return dataList.map((rowElemnt, index1) => (
+      <tr key={"tr_" + index1}>
+        {rowElemnt.map((colElemnt, index2) => {
+          const resRow = rowCheck(index1, index2);
+          const resCol = colCheck(index1, index2);
+          const id = "td_" + index1 + "_" + index2 + "_" + resCol.name;
+
+          if (resRow > -1 && resCol.colSpan > -1) {
+            return (
+              <td
+                key={id}
+                id={id}
+                rowSpan={resRow}
+                colSpan={resCol.colSpan}
+                onClick={() =>
+                  setClickedCell({ name: id, row: index1, col: index2 })
+                }
+                height={resRow * 30}
+                style={{
+                  backgroundColor:
+                    clickedCell.row === index1 && clickedCell.col === index2
+                      ? "aquamarine"
+                      : "white",
+                  border: "1px solid black"
+                }}
+              >
+                {resCol.name === "-1" ? "" : resCol.name}
+              </td>
+            );
+          }
+        })}
+      </tr>
+    ));
+  };
+  const handleAddRow = () => {
+    const tmpDataList = [...dataList];
+    tmpDataList.splice(clickedCell.row, 0, dataList[clickedCell.row]);
+    setDataList(tmpDataList);
+  };
+  const handleDeleteRow = () => {
+    const tmpDataList = [...dataList];
+    tmpDataList.splice(clickedCell.row, 1);
+    setDataList(tmpDataList);
+  };
+  const handleDivideCol = () => {
+    const tmpDataList = dataList.map((v) => [...v]); //deep clone
+    if (tmpDataList[clickedCell.row][clickedCell.col + 1] === "&") {
+      //이미 병합된 셀이라면
+      tmpDataList[clickedCell.row][clickedCell.col + 1] =
+        tmpDataList[clickedCell.row][clickedCell.col];
+    } else {
+      //전체 열 새롭게 추가
+      for (let i = 0; i < tmpDataList.length; i++) {
+        const std = tmpDataList[i][clickedCell.col];
+        if (i === clickedCell.row || (i > clickedCell.row && std === "")) {
+          tmpDataList[i].splice(clickedCell.col + 1, 0, std);
+        } else {
+          tmpDataList[i].splice(clickedCell.col + 1, 0, "&");
+        }
+      }
+    }
+    setDataList(tmpDataList);
+  };
+  const handleDivideRow = () => {
+    const tmpDataList = dataList.map((v) => [...v]); //deep clone
+    const tmpRow = [];
+    //이미 병합된 셀이라면
+    if (
+      clickedCell.row + 1 < dataList.length &&
+      dataList[clickedCell.row + 1][clickedCell.col] === ""
+    ) {
+      //기존 병합된 값 "" -> 데이터를 넣어서 병합 해제
+      tmpDataList[clickedCell.row + 1][clickedCell.col] =
+        tmpDataList[clickedCell.row][clickedCell.col];
+    } else {
+      //새로운 행 추가
+      for (let i = 0; i < dataList[clickedCell.row].length; i++) {
+        if (i === clickedCell.col || dataList[clickedCell.row][i] === "&") {
+          //해당 열만 나누기
+          tmpRow.push(dataList[clickedCell.row][i]);
+        } else {
+          //다른 열들은 병합 처리
+          tmpRow.push("");
+        }
+      }
+      //중간에 행 추가
+      tmpDataList.splice(clickedCell.row + 1, 0, tmpRow);
+    }
+
+    setDataList(tmpDataList);
+  };
+  const handleMergeCheck = (arr: string[]) => {
+    let colMergeCnt = 1;
+    let rowMergeCnt = 0;
+    for (let j = 0; j < arr.length; j++) {
+      if (colMergeCnt === j - clickedCell.col && arr[j] === "&") {
+        //해당 열이 병합되었는지 확인(몇개의 셀로 병합되었는지)
+        colMergeCnt++;
+      } else if (arr[j] === "") {
+        //해당 열 빼고 나머지 열이 모두 병합되어 있는지
+        //즉, 행 나누기로 생긴 열인지 체크
+        rowMergeCnt++;
+      }
+    }
+    return {
+      cnt: colMergeCnt,
+      res: colMergeCnt + rowMergeCnt === arr.length
+    };
+  };
+  const handleMergeRow = () => {
+    const tmpDataList = dataList.map((v) => [...v]); //deep clone
+    // 선택된 col 병합 체크
+    const stdMergeCnt = handleMergeCheck(tmpDataList[clickedCell.row]).cnt;
+    for (let i = clickedCell.row + 1; i < dataList.length; i++) {
+      //row 병합 체크
+      if (tmpDataList[i][clickedCell.col] !== "") {
+        // 아래줄 col 병합 체크
+        const nextMerge = handleMergeCheck(tmpDataList[i]);
+        if (stdMergeCnt === nextMerge.cnt) {
+          if (nextMerge.res) {
+            //'행 나누기'로 인해 만들어진 행인 경우
+            //전체 행 머지(해당 행 삭제)
+            tmpDataList.splice(clickedCell.row + 1, i - clickedCell.row);
+          } else {
+            //해당 셀만 머지
+            tmpDataList[i][clickedCell.col] = "";
+          }
+          setDataList(tmpDataList);
+        } else {
+          open();
+        }
+        break;
+      }
+    }
+  };
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
+    <div style={{ display: "flex", height: "100vh" }}>
+      <table className={styles.table}>
+        <thead></thead>
+        <tbody>{renderCell()}</tbody>
+      </table>
+      <div className={styles.btns}>
+        <Button onClick={handleAddRow}>아래행 추가</Button>
+        {/* <Button onClick={handleDeleteRow}>행삭제</Button> */}
+        <Button onClick={handleDivideCol}>열 나누기</Button>
+        <Button onClick={handleDivideRow}>행 나누기</Button>
+        <Button onClick={handleMergeRow}>아래셀합치기</Button>
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore the Next.js 13 playground.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+      <Modal opened={opened} onClose={close}>
+        <Modal.Body style={{ textAlign: "center" }}>
+          해당 작업은 불가합니다.
+        </Modal.Body>
+      </Modal>
+    </div>
+  );
 }
